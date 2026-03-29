@@ -1,10 +1,22 @@
-import '../globals.css';
-import AppShell from './AppShell';
+import type { Metadata } from 'next';
+import { AppShell } from '@/components/app-shell';
+import './globals.css';
 
-export default function Layout({ children }) {
+export const metadata: Metadata = {
+  title: 'SlipMint Signals',
+  description: 'Your signal trading platform',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <AppShell>
-      {children}
-    </AppShell>
+    <html lang="en">
+      <body>
+        <AppShell>{children}</AppShell>
+      </body>
+    </html>
   );
 }
