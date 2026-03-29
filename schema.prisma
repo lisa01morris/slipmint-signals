@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MembershipStatus {
+  FREE
+  PREMIUM
+  ADMIN
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+}
+
+enum ReferralStatus {
+  PENDING
+  CONVERTED
+  REWARDED
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String
+  email             String             @unique
+  membershipStatus  MembershipStatus   @default(FREE)
+  rank              String             @default("Newbie")
+  xpPoints          Int                @default(0)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  subscription      Subscription?
+  journalEntries    JournalEntry[]
+  lessonProgress    LessonProgress[]
+  referralsSent     Referral[]         @relation("Referrer")
+  referralsReceived Referral[]         @relation("Referred")
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String             @unique
+  paystackCustomerCode String?            @unique
+  paystackReference    String?            @unique
+  status               SubscriptionStatus @default(INACTIVE)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Lesson {
+  id           String           @id @default(cuid())
+  title        String
+  slug         String           @unique
+  level        String
+  content      String
+  premiumOnly  Boolean          @default(true)
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+  progress     LessonProgress[]
+}
+
+model LessonProgress {
+  id          String   @id @default(cuid())
+  userId      String
+  lessonId    String
+  completed   Boolean  @default(false)
+  completedAt DateTime?
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId])
+}
+
+model Signal {
+  id          String   @id @default(cuid())
+  market      String
+  direction   String
+  entry       String
+  stopLoss    String
+  takeProfit1 String
+  takeProfit2 String?
+  takeProfit3 String?
+  status      String
+  chartUrl    String?
+  explanation String
+  premiumOnly Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  market    String
+  direction String
+  entry     String
+  exit      String?
+  result    String?
+  notes     String?
+  imageUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Referral {
+  id             String         @id @default(cuid())
+  referrerUserId String
+  referredUserId String         @unique
+  code           String
+  status         ReferralStatus @default(PENDING)
+  rewardValue    Int            @default(0)
+  createdAt      DateTime       @default(now())
+
+  referrer User @relation("Referrer", fields: [referrerUserId], references: [id], onDelete: Cascade)
+  referred User @relation("Referred", fields: [referredUserId], references: [id], onDelete: Cascade)
+}
