@@ -1,8 +1,8 @@
-import { demoUser } from '@/lib/demo-data';
-
 export async function getCurrentUser() {
-  // Replace this with Clerk, NextAuth, or your real auth provider.
-  return demoUser;
+  return {
+    id: null,
+    membershipStatus: 'FREE',
+  };
 }
 
 export async function requirePremium() {
