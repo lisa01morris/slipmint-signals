@@ -1,0 +1,61 @@
+{
+  "$schema": "https://openapi.vercel.sh/microfrontends.json",
+  "applications": {
+    "slipmint-marketing": {
+      "defaultRoute": "/",
+      "routes": [
+        {
+          "path": "/**",
+          "project": "slipmint-marketing"
+        }
+      ],
+      "development": {
+        "fallback": "slipmint-marketing.vercel.app"
+      },
+      "preview": {
+        "fallback": "slipmint-marketing.vercel.app"
+      },
+      "production": {
+        "fallback": "slipmint-marketing.vercel.app"
+      }
+    },
+
+    "slipmint-dashboard": {
+      "defaultRoute": "/app",
+      "routes": [
+        {
+          "path": "/app/**",
+          "project": "slipmint-dashboard"
+        }
+      ],
+      "development": {
+        "fallback": "slipmint-dashboard.vercel.app"
+      },
+      "preview": {
+        "fallback": "slipmint-dashboard.vercel.app"
+      },
+      "production": {
+        "fallback": "slipmint-dashboard.vercel.app"
+      }
+    },
+
+    "slipmint-admin": {
+      "defaultRoute": "/admin",
+      "routes": [
+        {
+          "path": "/admin/**",
+          "project": "slipmint-admin"
+        }
+      ],
+      "development": {
+        "fallback": "slipmint-admin.vercel.app"
+      },
+      "preview": {
+        "fallback": "slipmint-admin.vercel.app"
+      },
+      "production": {
+        "fallback": "slipmint-admin.vercel.app"
+      }
+    }
+  }
+}
